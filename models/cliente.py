@@ -10,6 +10,6 @@ class ClienteBase(SQLModel):
     email: str
     telefone: int
 
-class cliente(ClienteBase, table=True):
+class Cliente(ClienteBase, table=True):
     reserva: 
     quarto:
