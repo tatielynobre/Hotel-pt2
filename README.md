@@ -17,7 +17,16 @@ class cliente{
     email: str
     telefone: int
 }
+class administrador{
+    id: int
+    nome: str
+    senha: int
+}
 cliente "1"--"1"reserva
 quarto "1"--"1" reserva
 quarto "1"--"1" cliente
+administrador "1"--"*" cliente
+administrador "1"--"*" reserva
+administrador "*"--"*" quarto
+
 ```
