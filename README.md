@@ -3,7 +3,7 @@ classDiagram
     class reserva{
     id: int
     id_quarto: int
-    id_cliente:
+    id_cliente: int
     data_inicio: str
     data_fim: str
 }
@@ -19,4 +19,5 @@ class cliente{
 }
 cliente "1"--"1"reserva
 quarto "1"--"1" reserva
+quarto "1"--"1" cliente
 ```
