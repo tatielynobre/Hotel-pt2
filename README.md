@@ -17,16 +17,16 @@ class cliente{
     email: str
     telefone: int
 }
-class administrador{
+class Atendente{
     id: int
     nome: str
     senha: int
 }
-cliente "1"--"1"reserva
+cliente "1"--"*"reserva
 quarto "1"--"1" reserva
 quarto "1"--"1" cliente
-administrador "1"--"*" cliente
-administrador "1"--"*" reserva
-administrador "*"--"*" quarto
+Atendente "1"--"*" cliente
+Atendente "1"--"*" reserva
+Atendente "*"--"*" quarto
 
 ```
