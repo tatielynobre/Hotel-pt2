@@ -6,6 +6,7 @@ if TYPE_CHECKING:
     from .cliente import Cliente
     from .quarto import Quarto
 
+
 class ReservaBase(SQLModel):
     id: Optional[int] = Field(default=None, primary_key=True)
     data_inicio: date
@@ -13,9 +14,10 @@ class ReservaBase(SQLModel):
     cliente_id: int = Field(default=None, foreign_key="cliente.id")
     quarto_id: int = Field(default=None, foreign_key="quarto.id")
 
+
 class Reserva(ReservaBase, table=True):
     cliente: "Cliente" = Relationship(back_populates="reservas")
-    quarto: "Quarto" = Relationship(back_populates="reservas")  
+    quarto: "Quarto" = Relationship(back_populates="reservas")
 
 
 class ReservaBaseWithCliente(ReservaBase):

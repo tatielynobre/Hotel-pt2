@@ -5,6 +5,7 @@ router = APIRouter(
     tags=["Home"],
 )
 
+
 # Home
 @router.get("/")
 async def root():

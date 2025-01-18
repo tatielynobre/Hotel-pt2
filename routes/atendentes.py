@@ -8,6 +8,7 @@ router = APIRouter(
     tags=["Atendentes"],
 )
 
+
 # Atendente
 @router.post("/", response_model=Atendente)
 def create_atendente(atendente: Atendente, session: Session = Depends(get_session)):
@@ -16,10 +17,15 @@ def create_atendente(atendente: Atendente, session: Session = Depends(get_sessio
     session.refresh(atendente)
     return atendente
 
+
 @router.get("/", response_model=list[Atendente])
-def read_atendentes(offset: int = 0, limit: int = Query(default=10, le=100), 
-               session: Session = Depends(get_session)):
+def read_atendentes(
+    offset: int = 0,
+    limit: int = Query(default=10, le=100),
+    session: Session = Depends(get_session),
+):
     return session.exec(select(Atendente).offset(offset).limit(limit)).all()
+
 
 @router.get("/{atendente_id}", response_model=Atendente)
 def read_atendente(atendente_id: int, session: Session = Depends(get_session)):
@@ -28,8 +34,11 @@ def read_atendente(atendente_id: int, session: Session = Depends(get_session)):
         raise HTTPException(status_code=404, detail="Atendente not found")
     return atendente
 
+
 @router.put("/{atendente_id}", response_model=Atendente)
-def update_atendente(atendente_id: int, atendente: Atendente, session: Session = Depends(get_session)):
+def update_atendente(
+    atendente_id: int, atendente: Atendente, session: Session = Depends(get_session)
+):
     db_atendente = session.get(Atendente, atendente_id)
     if not db_atendente:
         raise HTTPException(status_code=404, detail="Atendente not found")
@@ -39,6 +48,7 @@ def update_atendente(atendente_id: int, atendente: Atendente, session: Session =
     session.commit()
     session.refresh(db_atendente)
     return db_atendente
+
 
 @router.delete("/{atendente_id}")
 def delete_atendente(atendente_id: int, session: Session = Depends(get_session)):

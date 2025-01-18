@@ -3,10 +3,12 @@ from routes import clientes, home, reservas, quartos, atendentes
 from contextlib import asynccontextmanager
 from database import create_db
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     create_db()
     yield
+
 
 # Substituir o evento de startup pelo gerenciador de ciclo de vida
 app = FastAPI(lifespan=lifespan)

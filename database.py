@@ -19,12 +19,15 @@ if not DATABASE_URL:
 
 engine = create_engine(DATABASE_URL)
 
+
 # Criando e inicializando o banco de dados
 def create_db() -> None:
     SQLModel.metadata.create_all(engine)
 
+
 def get_session() -> Session:
     return Session(engine)
+
 
 # Ativando foreign_keys para SQLite
 @event.listens_for(Engine, "connect")

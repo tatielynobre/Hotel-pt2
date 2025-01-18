@@ -6,11 +6,13 @@ if TYPE_CHECKING:
     from .reserva import Reserva
     from .atendente import Atendente
 
+
 class ClienteBase(SQLModel):
     id: Optional[int] = Field(default=None, primary_key=True)
     nome: str
     email: str
     telefone: int
+
 
 class Cliente(ClienteBase, table=True):
     reservas: List["Reserva"] = Relationship(back_populates="cliente")
