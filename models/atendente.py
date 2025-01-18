@@ -1,12 +1,12 @@
 from sqlmodel import SQLModel, Field, Relationship
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List, Optional
 
 if TYPE_CHECKING:
     from .cliente import Cliente
 
 
 class AtendenteBase(SQLModel):
-    id: int | None = Field(default=None, primary_key=True)
+    id: Optional[int] | None = Field(default=None, primary_key=True)
     nome: str
 
 

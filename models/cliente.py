@@ -17,5 +17,5 @@ class ClienteBase(SQLModel):
 class Cliente(ClienteBase, table=True):
     reservas: List["Reserva"] = Relationship(back_populates="cliente")
     quartos: List["Quarto"] = Relationship(back_populates="cliente")
-    atendente_id: int = Field(default=None, foreign_key="atendente.id")
-    atendente: "Atendente" = Relationship(back_populates="clientes")
+    atendente_id: Optional[int] = Field(default=None, foreign_key="atendente.id")
+    atendente: Optional["Atendente"] = Relationship(back_populates="clientes")

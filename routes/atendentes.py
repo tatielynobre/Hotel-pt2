@@ -11,7 +11,8 @@ router = APIRouter(
 
 # Atendente
 @router.post("/", response_model=Atendente)
-def create_atendente(atendente: Atendente, session: Session = Depends(get_session)):
+def create_atendente(nome: str, session: Session = Depends(get_session)):
+    atendente = Atendente(nome=nome)
     session.add(atendente)
     session.commit()
     session.refresh(atendente)

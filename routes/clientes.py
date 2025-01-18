@@ -1,8 +1,9 @@
 from fastapi import APIRouter, HTTPException, Depends, Query
 from sqlmodel import Session, select
-from models.cliente import Cliente
+from models.cliente import Cliente, ClienteBase
 from models.reserva import Reserva
 from database import get_session
+from models.atendente import Atendente
 
 router = APIRouter(
     prefix="/clientes",
@@ -12,7 +13,8 @@ router = APIRouter(
 
 # Criar cliente
 @router.post("/", response_model=Cliente)
-def create_cliente(cliente: Cliente, session: Session = Depends(get_session)):
+def create_cliente(nome: str, email: str, telefone: int, session: Session = Depends(get_session)):
+    cliente = Cliente(nome=nome, email=email, telefone=telefone)
     session.add(cliente)
     session.commit()
     session.refresh(cliente)
@@ -40,9 +42,9 @@ def read_cliente(cliente_id: int, session: Session = Depends(get_session)):
 # Atualizar cliente
 @router.put("/{cliente_id}", response_model=Cliente)
 def update_cliente(
-    cliente_id: int, cliente: Cliente, session: Session = Depends(get_session)
+    cliente_id: int, cliente: ClienteBase, session: Session = Depends(get_session)
 ):
-    db_cliente = session.get(Cliente, cliente_id)
+    db_cliente = session.get(ClienteBase, cliente_id)
     if not db_cliente:
         raise HTTPException(status_code=404, detail="Cliente not found")
     for key, value in cliente.model_dump(exclude_unset=True).items():
@@ -73,3 +75,19 @@ def delete_cliente(cliente_id: int, session: Session = Depends(get_session)):
     session.commit()
 
     return {"ok": True}
+
+@router.put("/{cliente_id}/associar-atendente/{atendente_id}", response_model=Cliente)
+def associar_cliente_a_atendente(cliente_id: int, atendente_id: int, session: Session = Depends(get_session)):
+    cliente = session.get(Cliente, cliente_id)
+    if not cliente:
+        raise HTTPException(status_code=404, detail="Cliente não encontrado")
+
+    atendente = session.get(Atendente, atendente_id)
+    if not atendente:
+        raise HTTPException(status_code=404, detail="Atendente não encontrado")
+
+    cliente.atendente_id = atendente.id
+    session.add(cliente)
+    session.commit()
+    session.refresh(cliente)
+    return cliente

@@ -31,8 +31,8 @@ def get_session() -> Session:
 
 # Ativando foreign_keys para SQLite
 @event.listens_for(Engine, "connect")
-def set_sqlite_pragma(dbapi_connection, connection_record):
-    if isinstance(dbapi_connection, sqlite3.Connection):  # Somente para SQLite
+def set_sqlite_pragma(dbapi_connection, _):
+    if isinstance(dbapi_connection, sqlite3.Connection):
         cursor = dbapi_connection.cursor()
         cursor.execute("PRAGMA foreign_keys=ON")
         cursor.close()
