@@ -1,8 +1,14 @@
 from sqlmodel import SQLModel, Field, Relationship
-from typing import TYPE_CHECKING
+from .reserva import Reserva
+from typing import Optional, List
+from .cliente import Cliente
 
 class QuartoBase(SQLModel):
-    id: int | None = Field(default=None, primary_key=True)
+    id: Optional[int] = Field(default=None, primary_key=True)
     nivel_quarto: str
-class Quarto(QuartoBase, table=True):
+    numero_quarto: int
     
+class Quarto(QuartoBase, table=True):
+    cliente_id: Optional[int] = Field(default=None, foreign_key="cliente.id")
+    cliente: "Cliente" = Relationship(back_populates="quartos")
+    reservas: List['Reserva'] = Relationship(back_populates="quarto")

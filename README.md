@@ -23,10 +23,8 @@ class Atendente{
     senha: int
 }
 cliente "1"--"*"reserva
-quarto "1"--"1" reserva
-quarto "1"--"1" cliente
+quarto "*"--"*" reserva
+quarto "*"--"*" cliente
 Atendente "1"--"*" cliente
-Atendente "1"--"*" reserva
-Atendente "*"--"*" quarto
 
 ```

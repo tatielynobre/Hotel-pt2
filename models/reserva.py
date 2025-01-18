@@ -1,24 +1,22 @@
 from sqlmodel import SQLModel, Field, Relationship
-from typing import TYPE_CHECKING
-from datetime import datetime
-from cliente import Cliente, ClienteBase
-from quarto import Quarto
+from typing import TYPE_CHECKING, Optional
+from datetime import date
 
 if TYPE_CHECKING:
-    from cliente import Cliente
-    from quarto import Quarto
+    from .cliente import Cliente
+    from .quarto import Quarto
 
 class ReservaBase(SQLModel):
-    id: int | None = Field(default=None, primary_key=True)
-    data_inicio: datetime
-    data_fim: datetime
+    id: Optional[int] = Field(default=None, primary_key=True)
+    data_inicio: date
+    data_fim: date
+    cliente_id: int = Field(default=None, foreign_key="cliente.id")
+    quarto_id: int = Field(default=None, foreign_key="quarto.id")
 
-class Reserva(ReservaBase, table= True):
-    cliente_id: int = Field(foreign_key="cliente.id")
-    id_quarto: int = Field(foreign_key="quarto.id")
-    
-    cliente: 'Cliente' = Relationship(back_populates="reservas")
-    quarto: 'Quarto' = Relationship(back_populates="reservas")
+class Reserva(ReservaBase, table=True):
+    cliente: "Cliente" = Relationship(back_populates="reservas")
+    quarto: "Quarto" = Relationship(back_populates="reservas")  
+
 
 class ReservaBaseWithCliente(ReservaBase):
-    user: ClienteBase
+    cliente: Optional["Cliente"]
