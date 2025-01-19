@@ -18,7 +18,3 @@ class ReservaBase(SQLModel):
 class Reserva(ReservaBase, table=True):
     cliente: "Cliente" = Relationship(back_populates="reservas")
     quarto: "Quarto" = Relationship(back_populates="reservas")
-
-
-class ReservaBaseWithCliente(ReservaBase):
-    cliente: Optional["Cliente"]

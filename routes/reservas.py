@@ -1,10 +1,10 @@
-from datetime import date
-from typing import List
 from fastapi import APIRouter, HTTPException, Depends, Query
 from sqlmodel import Session, select
-from models.reserva import Reserva, ReservaBase
+from models.reserva import Reserva
 from database import get_session
 from models.quarto import Quarto
+from sqlalchemy.orm import selectinload
+from schemas.schema import ReservaResponse
 
 router = APIRouter(
     prefix="/reservas",
@@ -14,7 +14,7 @@ router = APIRouter(
 
 # Criar uma reserva
 @router.post("/", response_model=Reserva)
-def create_reserva(reserva: ReservaBase, session: Session = Depends(get_session)):
+def create_reserva(reserva: Reserva, session: Session = Depends(get_session)):
     quarto = session.get(Quarto, reserva.quarto_id)
     if not quarto:
         raise HTTPException(status_code=404, detail="Quarto não encontrado")
@@ -45,22 +45,43 @@ def get_reserva(reserva_id: int, session: Session = Depends(get_session)):
         raise HTTPException(status_code=404, detail="Reserva não encontrada")
     return reserva
 
-#Obter reserva por data
-@router.get("/", response_model=List[Reserva])
-def get_reservaData(data_inicio: date, data_fim: date, session: Session = Depends(get_session)):
-    query = select(Reserva).where(
-        (Reserva.data_inicio == data_inicio) | (Reserva.data_fim == data_fim)
-)
-    reserva = Session.exec(query).all()
-    if not reserva:
-        raise HTTPException(status_code=404, detail="Reserva não encontrada")
+# Obter reserva por data
+@router.get("/reservas/data", response_model=list[Reserva])
+def listar_reservas_por_intervalo(data_inicio: str, data_fim: str, session: Session = Depends(get_session)):
+    reservas = session.exec(
+        select(Reserva).where(Reserva.data_inicio >= data_inicio, Reserva.data_fim <= data_fim).order_by(Reserva.data_inicio)
+    ).all()
+    return reservas
+
+@router.get("/reservas/ordenadas", response_model=list[Reserva])
+def listar_reservas_ordenadas(session: Session = Depends(get_session)):
+    reservas = session.exec(select(Reserva).order_by(Reserva.data_inicio)).all()
+    return reservas
+    
+@router.get("/reservas/reservascompletas", response_model=list[ReservaResponse])
+def listar_reservas_completas(session: Session = Depends(get_session)):
+    reservas = session.exec(
+        select(Reserva)
+        .options(
+            selectinload(Reserva.cliente),  # Carregar o cliente
+            selectinload(Reserva.quarto)    # Carregar o quarto
+        )
+    ).all()
+    return reservas
 
 
+# Contar reservas por cliente
+@router.get("/{cliente_id}/reservas", response_model=list[Reserva])
+def listar_reservas_por_cliente(cliente_id: int, session: Session = Depends(get_session)):
+    reservas = session.exec(
+        select(Reserva).where(Reserva.cliente_id == cliente_id)
+    ).all()
+    return reservas
 
 # Atualizar uma reserva
 @router.put("/{reserva_id}", response_model=Reserva)
 def update_reserva(
-    reserva_id: int, reserva: ReservaBase, session: Session = Depends(get_session)
+    reserva_id: int, reserva: Reserva, session: Session = Depends(get_session)
 ):
     db_reserva = session.get(Reserva, reserva_id)
     if not db_reserva:

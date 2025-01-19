@@ -20,7 +20,6 @@ def create_cliente(nome: str, email: str, telefone: int, session: Session = Depe
     session.refresh(cliente)
     return cliente
 
-
 @router.get("/", response_model=list[Cliente])
 def read_clientes(
     offset: int = 0,
@@ -37,6 +36,18 @@ def read_cliente(cliente_id: int, session: Session = Depends(get_session)):
     if not cliente:
         raise HTTPException(status_code=404, detail="Cliente not found")
     return cliente
+
+# Buscar cliente por nome
+@router.get("/busca", response_model=list[Cliente])
+def buscar_clientes_por_nome(nome: str, session: Session = Depends(get_session)):
+    clientes = session.exec(select(Cliente).where(Cliente.nome.ilike(f"%{nome}%"))).all()
+    return clientes
+
+@router.get("/clientes/ordenados", response_model=list[Cliente])
+def listar_clientes_ordenados(session: Session = Depends(get_session)):
+    clientes = session.exec(select(Cliente).order_by(Cliente.nome)).all()
+    return clientes
+
 
 
 # Atualizar cliente

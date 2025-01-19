@@ -2,6 +2,8 @@ from fastapi import APIRouter, HTTPException, Depends, Query
 from sqlmodel import Session, select
 from models.atendente import Atendente
 from database import get_session
+from sqlalchemy.orm import joinedload
+
 
 router = APIRouter(
     prefix="/atendentes",
@@ -59,3 +61,8 @@ def delete_atendente(atendente_id: int, session: Session = Depends(get_session))
     session.delete(atendente)
     session.commit()
     return {"ok": True}
+
+@router.get("/clientes", response_model=Atendente)
+def listar_atendentes_com_clientes(session: Session = Depends(get_session)):
+    atendentes = session.exec(select(Atendente).options(joinedload(Atendente.clientes))).all()
+    return atendentes

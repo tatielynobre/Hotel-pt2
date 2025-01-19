@@ -10,17 +10,14 @@ load_dotenv()
 
 # Configurando o logger
 logging.basicConfig()
-logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)  # Removido espaço extra
+logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)
 
-# Criando o motor do banco de dados
 DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
     raise ValueError("DATABASE_URL não está definida no arquivo .env")
 
 engine = create_engine(DATABASE_URL)
 
-
-# Criando e inicializando o banco de dados
 def create_db() -> None:
     SQLModel.metadata.create_all(engine)
 
