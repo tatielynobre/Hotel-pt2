@@ -24,7 +24,7 @@ class Atendente{
 }
 cliente "1"--"*"reserva
 quarto "*"--"*" reserva
-quarto "*"--"*" cliente
+quarto "*"--"1" cliente
 Atendente "1"--"*" cliente
 
 ```

@@ -1,3 +1,5 @@
+from datetime import date
+from typing import List
 from fastapi import APIRouter, HTTPException, Depends, Query
 from sqlmodel import Session, select
 from models.reserva import Reserva, ReservaBase
@@ -42,6 +44,17 @@ def get_reserva(reserva_id: int, session: Session = Depends(get_session)):
     if not reserva:
         raise HTTPException(status_code=404, detail="Reserva não encontrada")
     return reserva
+
+#Obter reserva por data
+@router.get("/", response_model=List[Reserva])
+def get_reservaData(data_inicio: date, data_fim: date, session: Session = Depends(get_session)):
+    query = select(Reserva).where(
+        (Reserva.data_inicio == data_inicio) | (Reserva.data_fim == data_fim)
+)
+    reserva = Session.exec(query).all()
+    if not reserva:
+        raise HTTPException(status_code=404, detail="Reserva não encontrada")
+
 
 
 # Atualizar uma reserva
